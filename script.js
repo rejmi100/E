@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper pro XSS ochranu
     function escapeHTML(str) {
         if (!str) return '';
-        return str.replace(/[&<>'"]/g, 
+        return str.replace(/[&<>'"]/g,
             tag => ({
                 '&': '&amp;',
                 '<': '&lt;',
@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderování sezamu úkolů
     function renderTasks() {
         taskList.innerHTML = '';
-        
+
         if (tasks.length === 0) {
             taskList.innerHTML = `
                 <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 1.4rem; font-weight: 600; text-align: center;">
-                    Zatím nemáš žádné úkoly.<br>Přidej vlevo svůj první úkol!
+                    Zatím nemáš žádné úkoly.<br>Přidej úkol vlevo!
                 </div>`;
             return;
         }
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sortedTasks.forEach(task => {
             const taskEl = document.createElement('div');
             taskEl.className = `task-item ${task.completed ? 'completed' : ''}`;
-            
+
             // Formatování data
             let formattedDate = '';
             try {
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         year: 'numeric'
                     });
                 }
-            } catch(e) {}
+            } catch (e) { }
 
             taskEl.innerHTML = `
                 <div class="task-content">
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" class="delete-btn" onclick="deleteTask('${task.id}')" title="Smazat úkol">✖</button>
                 </div>
             `;
-            
+
             taskList.appendChild(taskEl);
         });
     }
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Submit form handler
     taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const nameInput = document.getElementById('task-name');
         const subjectInput = document.getElementById('task-subject');
         const dateInput = document.getElementById('task-date');
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Globální funkce pro smazání
     window.deleteTask = (id) => {
-        if(confirm('Opravdu chcete tento úkol smazat?')) {
+        if (confirm('Opravdu chcete tento úkol smazat?')) {
             tasks = tasks.filter(t => t.id !== id);
             saveAndRender();
         }
