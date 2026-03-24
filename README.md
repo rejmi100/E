@@ -5,17 +5,15 @@ Jednoduchá webová aplikace pro evidenci školních úkolů vytvořená v rámc
 ## 🚀 Funkce
 - Přidávání úkolů (Předmět, Popis, Termín).
 - Ochrana proti prázdnému zadání.
-- Responzivní design (funguje na PC i mobilu).
 - **Bonus:** Ukládání úkolů do prohlížeče (localStorage).
 
 ## 🛠 Technologie
 - HTML5
-- CSS3 (Flexbox/Grid)
-- JavaScript (Vanilla)
+- CSS
+- JavaScript
 
 ## 📖 Jak spustit
-1. Stáhni si tento repozitář (nebo ho naklonuj).
-2. Otevři soubor `index.html` v jakémkoliv moderním prohlížeči (Chrome, Firefox, Safari).
+1. Na githubu otevřete kolonku pages
 
 ## 📅 Plán vývoje (To-Do)
 - [x] Založení projektu a GitHub repozitáře
@@ -26,4 +24,8 @@ Jednoduchá webová aplikace pro evidenci školních úkolů vytvořená v rámc
 - [x] Implementace localStorage (Bonus)
 
 ## 👤 Autoři
-- [Tvoje Jméno / Přezdívka]
+- Roman Vítek
+- Pavel Dimolios
+- Tomáš Bosák
+- Jaroslav Machatý
+- Zdeněk Rysnyak
