@@ -19,11 +19,11 @@ Jednoduchá webová aplikace pro evidenci školních úkolů vytvořená v rámc
 
 ## 📅 Plán vývoje (To-Do)
 - [x] Založení projektu a GitHub repozitáře
-- [ ] Vytvoření HTML kostry
-- [ ] Stylování pomocí CSS
-- [ ] Implementace přidávání úkolů v JS
-- [ ] Testování validace formuláře
-- [ ] Implementace localStorage (Bonus)
+- [x] Vytvoření HTML kostry
+- [x] Stylování pomocí CSS
+- [x] Implementace přidávání úkolů v JS
+- [x] Testování validace formuláře
+- [x] Implementace localStorage (Bonus)
 
 ## 👤 Autoři
 - [Tvoje Jméno / Přezdívka]

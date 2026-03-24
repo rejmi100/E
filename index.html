@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="bg-shapes">
         <div class="shape shape1"></div>
@@ -29,12 +31,9 @@
                         <option value="Matematika">Matematika</option>
                         <option value="Český jazyk">Český jazyk</option>
                         <option value="Anglický jazyk">Anglický jazyk</option>
-                        <option value="Fyzika">Fyzika</option>
+                        <option value="ZPD">ZPD</option>
                         <option value="Informatika">Informatika</option>
                         <option value="Dějepis">Dějepis</option>
-                        <option value="Biologie">Biologie</option>
-                        <option value="Zeměpis">Zeměpis</option>
-                        <option value="Chemie">Chemie</option>
                     </select>
                     <input type="date" id="task-date" required class="input-half">
                 </div>
@@ -44,8 +43,9 @@
                 </div>
             </form>
         </section>
-        
+
         <section class="right-panel">
+            <div id="no-tasks-message">Zatím tu nejsou žádné úkoly.</div>
             <div id="task-list" class="task-list">
                 <!-- Úkoly se zde budou zobrazovat -->
             </div>
@@ -54,4 +54,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -23,12 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTasks() {
         taskList.innerHTML = '';
         
+        const noTasksMsg = document.getElementById('no-tasks-message');
         if (tasks.length === 0) {
-            taskList.innerHTML = `
-                <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 1.4rem; font-weight: 600; text-align: center;">
-                    Zatím nemáš žádné úkoly.<br>Přidej vlevo svůj první úkol!
-                </div>`;
+            noTasksMsg.classList.remove('hidden');
             return;
+        } else {
+            noTasksMsg.classList.add('hidden');
         }
 
         // Nejprve nesplněné, poté dle data
@@ -56,14 +56,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch(e) {}
 
+            let metaParts = [];
+            if (task.subject) metaParts.push(`<span>${escapeHTML(task.subject)}</span>`);
+            if (task.desc) metaParts.push(`<span class="task-desc-text-inline">${escapeHTML(task.desc)}</span>`);
+            if (formattedDate) metaParts.push(`<span>TERMÍN: ${formattedDate}</span>`);
+
             taskEl.innerHTML = `
                 <div class="task-content">
                     <h3 class="task-title">${escapeHTML(task.name)}</h3>
                     <div class="task-meta">
-                        ${task.subject ? `<span>${escapeHTML(task.subject)}</span>` : ''}
-                        ${formattedDate ? `<span>TERMÍN: ${formattedDate}</span>` : ''}
+                        ${metaParts.join(' <span class="separator">|</span> ')}
                     </div>
-                    ${task.desc ? `<div class="task-desc-text">${escapeHTML(task.desc)}</div>` : ''}
                 </div>
                 <div class="task-actions">
                     <label class="checkbox-wrapper" title="Označit jako hotové">

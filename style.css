@@ -271,7 +271,8 @@ select.input-half {
 .task-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.8rem;
     font-size: 0.95rem;
     color: #000;
     font-weight: 700;
@@ -286,14 +287,38 @@ select.input-half {
     letter-spacing: 0.5px;
 }
 
-.task-desc-text {
-    margin-top: 0.2rem;
-    font-size: 1rem;
+.task-meta span.separator {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1.2rem;
+    color: var(--border-color);
+}
+
+.task-meta span.task-desc-text-inline {
+    background: none;
+    border: none;
+    padding: 0;
+    text-transform: none;
+    font-weight: 600;
+    font-size: 0.95rem;
     color: #333;
-    white-space: pre-wrap;
-    word-break: break-word;
-    border-left: 3px solid #ccc;
-    padding-left: 0.8rem;
+}
+
+#no-tasks-message {
+    padding: 3rem 1rem;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #000;
+    background: #fff;
+    border: 3px solid var(--border-color);
+    box-shadow: 4px 4px 0px rgba(0,0,0,1);
+    margin-bottom: 1.2rem;
+}
+
+.hidden {
+    display: none !important;
 }
 
 .task-actions {
