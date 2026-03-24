@@ -6,8 +6,6 @@
     <title>Školní nástěnka úkolů</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="bg-shapes">
@@ -19,14 +17,9 @@
 
     <header class="header">
         <h1>školní nástěnka ukolů</h1>
-        <div id="user-info" class="user-info" style="display: none;">
-            <span id="user-email"></span>
-            <button id="logout-btn" class="logout-btn">Odhlásit se</button>
-        </div>
-        <button id="goto-login-btn" class="logout-btn">Přihlásit se</button>
     </header>
 
-    <main class="container" style="display: none;">
+    <main class="container">
         <section class="left-panel">
             <form id="task-form">
                 <input type="text" id="task-name" placeholder="Název úkolu..." required class="input-full">
@@ -55,6 +48,10 @@
         <section class="right-panel">
             <div id="task-list" class="task-list">
                 <!-- Úkoly se zde budou zobrazovat -->
+            </div>
+        </section>
+    </main>
+
     <script src="script.js"></script>
 </body>
 </html>

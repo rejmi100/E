@@ -1,102 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Nahraďte svými údaji ze Supabase (Settings -> API)
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-    
-    // Inicializace Supabase klienta
-    let supabase = null;
-    try {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (e) {
-        console.warn("Supabase initialization failed. Make sure to replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY.");
-    }
-
     const taskForm = document.getElementById('task-form');
     const taskList = document.getElementById('task-list');
-    
-    // Header UI elementy
-    const userInfo = document.getElementById('user-info');
-    const userEmailSpan = document.getElementById('user-email');
-    const logoutBtn = document.getElementById('logout-btn');
-    const gotoLoginBtn = document.getElementById('goto-login-btn');
-    const container = document.querySelector('.container');
 
-    let tasks = [];
-    let currentUser = null;
-
-    if (gotoLoginBtn) {
-        gotoLoginBtn.addEventListener('click', () => {
-            window.location.href = 'login.html';
-        });
-    }
-
-    // Sledování stavu přihlášení
-    function updateAuthState(session) {
-        if (session) {
-            currentUser = session.user;
-            userEmailSpan.textContent = currentUser.email;
-            userInfo.style.display = 'flex';
-            if (gotoLoginBtn) gotoLoginBtn.style.display = 'none';
-            if (container) container.style.display = 'flex';
-            loadTasks();
-        } else {
-            // Not authenticated
-            currentUser = null;
-            userInfo.style.display = 'none';
-            if (gotoLoginBtn) gotoLoginBtn.style.display = 'block';
-            if (container) container.style.display = 'none';
-        }
-    }
-
-    if (supabase) {
-        try {
-            supabase.auth.getSession().then(({ data: { session } }) => {
-                updateAuthState(session);
-            }).catch(err => {
-                console.error(err);
-                updateAuthState(null);
-            });
-
-            supabase.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-                    updateAuthState(session);
-                }
-            });
-        } catch (e) {
-            console.error("Supabase není správně nastavené. Chybí platná URL nebo klíč.", e);
-            updateAuthState(null);
-        }
-    } else {
-        updateAuthState(null);
-    }
-
-    // Odhlášení
-    logoutBtn.addEventListener('click', async () => {
-        if (supabase) await supabase.auth.signOut();
-    });
-
-    // Načtení úkolů ze Supabase
-    async function loadTasks() {
-        if (!currentUser) return;
-        
-        const { data, error } = await supabase
-            .from('tasks')
-            .select('*')
-            .eq('user_id', currentUser.id);
-            
-        if (error) {
-            console.error('Chyba při načítání úkolů:', error);
-            return;
-        }
-        
-        tasks = data || [];
-        renderTasks();
-    }
+    // Nacteni ukolu z uloziste
+    let tasks = JSON.parse(localStorage.getItem('ok_nastenka_tasks')) || [];
 
     // Helper pro XSS ochranu
     function escapeHTML(str) {
         if (!str) return '';
-        return str.toString().replace(/[&<>'"]/g,
+        return str.replace(/[&<>'"]/g, 
             tag => ({
                 '&': '&amp;',
                 '<': '&lt;',
@@ -107,14 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    // Renderování seznamu úkolů
+    // Renderování sezamu úkolů
     function renderTasks() {
         taskList.innerHTML = '';
-
+        
         if (tasks.length === 0) {
             taskList.innerHTML = `
                 <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 1.4rem; font-weight: 600; text-align: center;">
-                    Zatím nemáš žádné úkoly.<br>Přidej úkol vlevo!
+                    Zatím nemáš žádné úkoly.<br>Přidej vlevo svůj první úkol!
                 </div>`;
             return;
         }
@@ -130,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sortedTasks.forEach(task => {
             const taskEl = document.createElement('div');
             taskEl.className = `task-item ${task.completed ? 'completed' : ''}`;
-
+            
             // Formatování data
             let formattedDate = '';
             try {
@@ -142,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         year: 'numeric'
                     });
                 }
-            } catch (e) { }
+            } catch(e) {}
 
             taskEl.innerHTML = `
                 <div class="task-content">
@@ -160,17 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" class="delete-btn" onclick="deleteTask('${task.id}')" title="Smazat úkol">✖</button>
                 </div>
             `;
-
+            
             taskList.appendChild(taskEl);
         });
     }
 
-    // Přidání nového úkolu
-    taskForm.addEventListener('submit', async (e) => {
+    // Submit form handler
+    taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        if (!currentUser) return;
-
         const nameInput = document.getElementById('task-name');
         const subjectInput = document.getElementById('task-subject');
         const dateInput = document.getElementById('task-date');
@@ -178,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newTask = {
             id: Date.now().toString(),
-            user_id: currentUser.id,
             name: nameInput.value.trim(),
             subject: subjectInput.value,
             date: dateInput.value,
@@ -188,72 +97,38 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (newTask.name !== '' && newTask.subject !== '' && newTask.date !== '') {
-            // Optimistický update UI
             tasks.push(newTask);
-            renderTasks();
-            
+            saveAndRender();
             taskForm.reset();
             nameInput.focus();
-
-            // Uložení do Supabase databáze
-            const { error } = await supabase.from('tasks').insert([newTask]);
-            if (error) {
-                console.error('Chyba při ukládání úkolu:', error);
-                alert('Nepodařilo se uložit úkol do databáze.');
-                // Rollback if needed
-                loadTasks();
-            }
         } else {
             alert('Vyplňte prosím všechna povinná pole!');
         }
     });
 
-    // Přepnutí hotovo/nehotovo
-    window.toggleTask = async (id) => {
-        if (!currentUser) return;
-        
+    // Globální funkce pro přepnutí hotovo/nechystáno
+    window.toggleTask = (id) => {
         const task = tasks.find(t => t.id === id);
         if (task) {
             task.completed = !task.completed;
-            renderTasks(); // optimistický update
-
-            const { error } = await supabase
-                .from('tasks')
-                .update({ completed: task.completed })
-                .eq('id', id);
-
-            if (error) {
-                console.error('Chyba při aktualizaci úkolu:', error);
-                task.completed = !task.completed; // rollback
-                renderTasks();
-                alert('Nepodařilo se aktualizovat stav úkolu.');
-            }
+            saveAndRender();
         }
     };
 
-    // Smazání úkolu
-    window.deleteTask = async (id) => {
-        if (!currentUser) return;
-        
-        if (confirm('Opravdu chcete tento úkol smazat?')) {
-            const taskIndex = tasks.findIndex(t => t.id === id);
-            if (taskIndex > -1) {
-                const taskToDelete = tasks[taskIndex];
-                tasks.splice(taskIndex, 1);
-                renderTasks(); // optimistický update
-
-                const { error } = await supabase
-                    .from('tasks')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    console.error('Chyba při mazání úkolu:', error);
-                    tasks.splice(taskIndex, 0, taskToDelete); // rollback
-                    renderTasks();
-                    alert('Nepodařilo se smazat úkol z databáze.');
-                }
-            }
+    // Globální funkce pro smazání
+    window.deleteTask = (id) => {
+        if(confirm('Opravdu chcete tento úkol smazat?')) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveAndRender();
         }
     };
+
+    // Uložení a překreslení s animací (jen drobný efekt na DOM update)
+    function saveAndRender() {
+        localStorage.setItem('ok_nastenka_tasks', JSON.stringify(tasks));
+        renderTasks();
+    }
+
+    // Prvotní vykreslení
+    renderTasks();
 });
