@@ -2,8 +2,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('task-form');
     const taskList = document.getElementById('task-list');
 
-    // Nacteni ukolu z uloziste
+    // Nacteni ukolu z uloziste a vyčištění starých hotových úkolů
     let tasks = JSON.parse(localStorage.getItem('ok_nastenka_tasks')) || [];
+    
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    let tasksCleaned = false;
+
+    tasks = tasks.filter(task => {
+        if (task.completed) {
+            if (!task.completedAt) {
+                // Pro staré úkoly, kterým chybí záznam o čase dokončení
+                task.completedAt = now;
+                tasksCleaned = true;
+            } else if (now - task.completedAt > ONE_DAY_MS) {
+                tasksCleaned = true;
+                return false; // odstranit
+            }
+        }
+        return true;
+    });
+
+    if (tasksCleaned) {
+        localStorage.setItem('ok_nastenka_tasks', JSON.stringify(tasks));
+    }
 
     // Helper pro XSS ochranu
     function escapeHTML(str) {
@@ -45,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Formatování data
             let formattedDate = '';
+            let isPastDue = false;
             try {
                 const dateObj = new Date(task.date);
                 if (!isNaN(dateObj)) {
@@ -53,13 +76,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         month: '2-digit',
                         year: 'numeric'
                     });
+                    
+                    if (!task.completed) {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const taskDateOnly = new Date(dateObj);
+                        taskDateOnly.setHours(0, 0, 0, 0);
+                        
+                        if (taskDateOnly < today) {
+                            isPastDue = true;
+                        }
+                    }
                 }
             } catch(e) {}
 
             let metaParts = [];
             if (task.subject) metaParts.push(`<span>${escapeHTML(task.subject)}</span>`);
             if (task.desc) metaParts.push(`<span class="task-desc-text-inline">${escapeHTML(task.desc)}</span>`);
-            if (formattedDate) metaParts.push(`<span>TERMÍN: ${formattedDate}</span>`);
+            if (formattedDate) {
+                const dateClass = isPastDue ? ' class="past-due-date"' : '';
+                metaParts.push(`<span${dateClass}>TERMÍN: ${formattedDate}</span>`);
+            }
 
             taskEl.innerHTML = `
                 <div class="task-content">
@@ -113,7 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleTask = (id) => {
         const task = tasks.find(t => t.id === id);
         if (task) {
-            task.completed = !task.completed;
+            if (!task.completed) {
+                if (!confirm('Opravdu chcete označit tento úkol jako hotový?')) {
+                    renderTasks(); // Vrátit zobrazení checkboxu
+                    return;
+                }
+                task.completed = true;
+                task.completedAt = Date.now();
+            } else {
+                task.completed = false;
+                task.completedAt = null;
+            }
             saveAndRender();
         }
     };

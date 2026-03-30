@@ -305,6 +305,12 @@ select.input-half {
     color: #333;
 }
 
+.task-meta span.past-due-date {
+    background: #ff4d4d;
+    color: #fff;
+    border-color: #000;
+}
+
 #no-tasks-message {
     padding: 3rem 1rem;
     text-align: center;
