@@ -28,4 +28,4 @@ Jednoduchá webová aplikace pro evidenci školních úkolů vytvořená v rámc
 - Pavel Dimolios
 - Tomáš Bosák
 - Jaroslav Machatý
-- Zdeněk Rysnyak
+- Zdeněk Rusnyák
