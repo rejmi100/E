@@ -7,7 +7,7 @@ Jednoduchá webová aplikace pro evidenci školních úkolů vytvořená v rámc
 - Ochrana proti prázdnému zadání.
 - **Bonus:** Ukládání úkolů do prohlížeče (localStorage).
 
-## 🛠 Technologie
+## 🛠 Jazyky
 - HTML5
 - CSS
 - JavaScript
