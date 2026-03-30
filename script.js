@@ -2,6 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('task-form');
     const taskList = document.getElementById('task-list');
 
+    // Inicializace bodů
+    let points = parseInt(localStorage.getItem('ok_nastenka_points')) || 0;
+    const pointsCountEl = document.getElementById('points-count');
+    
+    function updatePointsDisplay() {
+        if (pointsCountEl) pointsCountEl.textContent = points;
+    }
+    
+    function addPoints(amount) {
+        points += amount;
+        if (points < 0) points = 0;
+        localStorage.setItem('ok_nastenka_points', points);
+        updatePointsDisplay();
+    }
+    updatePointsDisplay();
+
     // Inicializace vylepšeného kalendáře pro výběr data
     flatpickr("#task-date", {
         locale: "cs",
@@ -167,9 +183,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 task.completed = true;
                 task.completedAt = Date.now();
+                addPoints(10);
             } else {
                 task.completed = false;
                 task.completedAt = null;
+                addPoints(-10);
             }
             saveAndRender();
         }

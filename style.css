@@ -439,3 +439,25 @@ select.input-half {
     border-color: #000 !important;
     border-width: 2px !important;
 }
+
+/* Points Badge */
+.points-badge {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: #fff;
+    border: 3px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    box-shadow: 6px 6px 0px rgba(0,0,0,1);
+    z-index: 1000;
+    color: #000;
+    transition: transform 0.2s;
+}
+
+.points-badge:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px rgba(0,0,0,1);
+}
+
