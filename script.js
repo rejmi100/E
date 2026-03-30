@@ -2,6 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('task-form');
     const taskList = document.getElementById('task-list');
 
+    // Inicializace vylepšeného kalendáře pro výběr data
+    flatpickr("#task-date", {
+        locale: "cs",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d. m. Y",
+        placeholder: "Vyberte termín...",
+        allowInput: true
+    });
+
     // Nacteni ukolu z uloziste a vyčištění starých hotových úkolů
     let tasks = JSON.parse(localStorage.getItem('ok_nastenka_tasks')) || [];
     
